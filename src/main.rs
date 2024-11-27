@@ -1,19 +1,10 @@
-mod io;
-mod problem;
 #[allow(unused)]
 mod days;
+mod io;
+mod problem;
 
-use std::time::Instant;
-use problem::Problem;
+use chrono::Datelike;
 use days::day_1::DayOne;
-use days::day_2::DayTwo;
-use days::day_3::DayThree;
-use days::day_4::DayFour;
-use days::day_5::DayFive;
-use days::day_6::DaySix;
-use days::day_7::DaySeven;
-use days::day_8::DayEight;
-use days::day_9::DayNine;
 use days::day_10::DayTen;
 use days::day_11::DayEleven;
 use days::day_12::DayTwelve;
@@ -24,13 +15,22 @@ use days::day_16::DaySixteen;
 use days::day_17::DaySeventeen;
 use days::day_18::DayEighteen;
 use days::day_19::DayNineteen;
+use days::day_2::DayTwo;
 use days::day_20::DayTwenty;
 use days::day_21::DayTwentyOne;
 use days::day_22::DayTwentyTwo;
 use days::day_23::DayTwentyThree;
 use days::day_24::DayTwentyFour;
 use days::day_25::DayTwentyFive;
-use chrono::Datelike;
+use days::day_3::DayThree;
+use days::day_4::DayFour;
+use days::day_5::DayFive;
+use days::day_6::DaySix;
+use days::day_7::DaySeven;
+use days::day_8::DayEight;
+use days::day_9::DayNine;
+use problem::Problem;
+use std::time::Instant;
 
 fn day_to_problem(day: usize) -> Option<Box<dyn Problem>> {
     match day {
@@ -59,7 +59,7 @@ fn day_to_problem(day: usize) -> Option<Box<dyn Problem>> {
         23 => Some(Box::new(DayTwentyThree {})),
         24 => Some(Box::new(DayTwentyFour {})),
         25 => Some(Box::new(DayTwentyFive {})),
-        _ => None
+        _ => None,
     }
 }
 
@@ -71,14 +71,13 @@ fn main() {
             println!("No problem for day {day}...");
         }
         Some(problem) => {
-
             let start = Instant::now();
             let answer_one = problem.part_one(format!("input/puzzle_{day}_1.txt").as_str());
-            println!("solving task one took {:?}",start.elapsed());
+            println!("solving task one took {:?}", start.elapsed());
 
             let start = Instant::now();
             let answer_two = problem.part_two(format!("input/puzzle_{day}_2.txt").as_str());
-            println!("solving task two took {:?}",start.elapsed());
+            println!("solving task two took {:?}", start.elapsed());
 
             println!("Answer of Task Day {day}/1:");
             println!("{answer_one}\n");
