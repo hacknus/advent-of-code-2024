@@ -1,22 +1,23 @@
-use std::fs;
 use csv;
+use std::fs;
+use std::path::Path;
 
 #[allow(dead_code)]
-pub fn read_file_lines(file_path: &str) -> Vec<String> {
-    let contents = fs::read_to_string(file_path)
-        .expect("Should have been able to read the file");
+pub fn read_file_lines(file_path: &Path) -> Vec<String> {
+    let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
     contents.split("\n").map(|s| s.to_string()).collect()
 }
 
 #[allow(dead_code)]
-pub fn read_from_csv(path: &str, delimiter: u8) -> Vec<Vec<String>> {
+pub fn read_from_csv(path: &Path, delimiter: u8) -> Vec<Vec<String>> {
     // Creates a new csv 'Reader' from a file
     let mut reader = csv::ReaderBuilder::new()
         .delimiter(delimiter)
         .has_headers(false)
-        .from_path(path).expect("Failed to open CSV!");
+        .from_path(path)
+        .expect("Failed to open CSV!");
     // Retrieve and print header record
-    match reader.headers(){
+    match reader.headers() {
         Ok(header) => {
             println!("Found header: {:?}", header);
         }
@@ -30,14 +31,14 @@ pub fn read_from_csv(path: &str, delimiter: u8) -> Vec<Vec<String>> {
         //println!("{:?}", record);
         let mut row = vec![];
         for cell in &record {
-             // match cell.parse::<f64>() {
-             //     Ok(value) => {
-             //         row.push(value);
-             //     }
-             //     Err(err) => {
-             //         println!("Error {err} parsing value {row:?}");
-             //     }
-             // }
+            // match cell.parse::<f64>() {
+            //     Ok(value) => {
+            //         row.push(value);
+            //     }
+            //     Err(err) => {
+            //         println!("Error {err} parsing value {row:?}");
+            //     }
+            // }
             row.push(cell.to_string());
         }
         contents.push(row);

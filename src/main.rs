@@ -30,6 +30,7 @@ use days::day_7::DaySeven;
 use days::day_8::DayEight;
 use days::day_9::DayNine;
 use problem::Problem;
+use std::path::Path;
 use std::time::Instant;
 
 fn day_to_problem(day: usize) -> Option<Box<dyn Problem>> {
@@ -72,12 +73,16 @@ fn main() {
         }
         Some(problem) => {
             let start = Instant::now();
-            let answer_one = problem.part_one(format!("input/puzzle_{day}_1.txt").as_str());
-            println!("solving task one took {:?}", start.elapsed());
+            let answer_one =
+                problem.part_one(Path::new(format!("input/puzzle_{day}_1.txt").as_str()));
+            let elapsed = start.elapsed();
+            println!("solving task one took {:?}", elapsed);
 
             let start = Instant::now();
-            let answer_two = problem.part_two(format!("input/puzzle_{day}_2.txt").as_str());
-            println!("solving task two took {:?}", start.elapsed());
+            let answer_two =
+                problem.part_two(Path::new(format!("input/puzzle_{day}_2.txt").as_str()));
+            let elapsed = start.elapsed();
+            println!("solving task two took {:?}", elapsed);
 
             println!("Answer of Task Day {day}/1:");
             println!("{answer_one}\n");
