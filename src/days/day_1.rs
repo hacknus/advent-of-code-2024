@@ -10,8 +10,8 @@ impl Problem for DayOne {
         let mut historian_b = vec![];
         for line in content.iter() {
             let split = line.split_whitespace().collect::<Vec<&str>>();
-            historian_a.push(split[0]);
-            historian_b.push(split[1]);
+            historian_a.push(split[0].parse::<i32>().unwrap());
+            historian_b.push(split[1].parse::<i32>().unwrap());
         }
 
         historian_a.sort();
@@ -20,9 +20,7 @@ impl Problem for DayOne {
         let mut sum = 0;
         let n = historian_b.len();
         for i in 0..n {
-            sum += (historian_a[i].parse::<i32>().unwrap()
-                - historian_b[i].parse::<i32>().unwrap())
-            .abs();
+            sum += (historian_a[i] - historian_b[i]).abs();
         }
 
         format!("{}", sum)
@@ -34,14 +32,14 @@ impl Problem for DayOne {
         let mut historian_b = vec![];
         for line in content.iter() {
             let split = line.split_whitespace().collect::<Vec<&str>>();
-            historian_a.push(split[0]);
-            historian_b.push(split[1]);
+            historian_a.push(split[0].parse::<i32>().unwrap());
+            historian_b.push(split[1].parse::<i32>().unwrap());
         }
 
         let mut sum = 0;
         let n = historian_b.len();
         for i in 0..n {
-            sum += (historian_a[i].parse::<i32>().unwrap()
+            sum += (historian_a[i]
                 * historian_b.iter().filter(|&n| *n == historian_a[i]).count() as i32)
                 .abs();
         }
