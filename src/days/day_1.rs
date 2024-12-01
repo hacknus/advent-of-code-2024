@@ -45,8 +45,3 @@ impl Problem for DayOne {
         format!("{}", sum)
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-}

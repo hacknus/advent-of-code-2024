@@ -12,8 +12,3 @@ impl Problem for DayFour {
         format!("{}", "Part two not yet implemented.")
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-}
