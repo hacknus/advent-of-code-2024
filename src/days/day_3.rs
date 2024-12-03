@@ -36,7 +36,7 @@ impl Problem for DayThree {
 
             let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
             sum += re
-                .captures_iter(&dos)
+                .captures_iter(dos)
                 .map(|c| c.extract())
                 .collect::<Vec<(&str, [&str; 2])>>()
                 .iter()
