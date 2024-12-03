@@ -14,22 +14,14 @@ pub struct DayThree {}
 impl Problem for DayThree {
     fn part_one(&self, input: &Path) -> String {
         let content = fs::read_to_string(input).expect("Should have been able to read the file");
-        let re = Regex::new(r"mul\(\d+,\d+\)").unwrap();
-        let matches: Vec<&str> = re
-            .find_iter(&content)
-            .filter_map(|digits| Option::from(digits.as_str()))
-            .collect();
-        let mut sum = 0;
-        for m in matches {
-            let split = m.split(",");
-            let numbers = split
-                .map(|ns| {
-                    let number = ns.chars().filter(|c| c.is_numeric()).collect::<String>();
-                    number.parse::<i32>().unwrap()
-                })
-                .collect::<Vec<i32>>();
-            sum += numbers[0] * numbers[1];
-        }
+        let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
+        let sum = re
+            .captures_iter(&content)
+            .map(|c| c.extract())
+            .collect::<Vec<(&str, [&str; 2])>>()
+            .iter()
+            .map(|(_, a)| a[0].parse::<i32>().unwrap() * a[1].parse::<i32>().unwrap())
+            .sum::<i32>();
         format!("{}", sum)
     }
 
@@ -42,22 +34,14 @@ impl Problem for DayThree {
 
             let dos = split_donts.first().unwrap();
 
-            let re = Regex::new(r"mul\(\d+,\d+\)").unwrap();
-            let matches: Vec<&str> = re
-                .find_iter(dos)
-                .filter_map(|digits| Option::from(digits.as_str()))
-                .collect();
-            for m in matches {
-                let split = m.split(",");
-                let numbers = split
-                    .map(|ns| {
-                        let number = ns.chars().filter(|c| c.is_numeric()).collect::<String>();
-                        number.parse::<i32>().unwrap()
-                    })
-                    .collect::<Vec<i32>>();
-                dbg!(&numbers);
-                sum += numbers[0] * numbers[1];
-            }
+            let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
+            sum += re
+                .captures_iter(&dos)
+                .map(|c| c.extract())
+                .collect::<Vec<(&str, [&str; 2])>>()
+                .iter()
+                .map(|(_, a)| a[0].parse::<i32>().unwrap() * a[1].parse::<i32>().unwrap())
+                .sum::<i32>();
         }
 
         format!("{}", sum)
