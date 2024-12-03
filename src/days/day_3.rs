@@ -17,10 +17,7 @@ impl Problem for DayThree {
         let re = Regex::new(r"mul\(\d+,\d+\)").unwrap();
         let matches: Vec<&str> = re
             .find_iter(&content)
-            // try to parse the string matches as i64 (inferred from fn type signature)
-            // and filter out the matches that can't be parsed (e.g. if there are too many digits to store in an i64).
             .filter_map(|digits| Option::from(digits.as_str()))
-            // collect the results in to a Vec<i64> (inferred from fn type signature)
             .collect();
         let mut sum = 0;
         for m in matches {
@@ -48,10 +45,7 @@ impl Problem for DayThree {
             let re = Regex::new(r"mul\(\d+,\d+\)").unwrap();
             let matches: Vec<&str> = re
                 .find_iter(dos)
-                // try to parse the string matches as i64 (inferred from fn type signature)
-                // and filter out the matches that can't be parsed (e.g. if there are too many digits to store in an i64).
                 .filter_map(|digits| Option::from(digits.as_str()))
-                // collect the results in to a Vec<i64> (inferred from fn type signature)
                 .collect();
             for m in matches {
                 let split = m.split(",");
