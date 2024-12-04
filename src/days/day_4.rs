@@ -8,7 +8,7 @@ impl Problem for DayFour {
     fn part_one(&self, input: &Path) -> String {
         let content = read_file_lines(input);
         let mut sum = 0;
-        let width = content[0].len();
+        let width = content[0].chars().count();
         let content = content.into_iter().collect::<String>();
         let n = content.len();
 
@@ -84,7 +84,7 @@ impl Problem for DayFour {
     fn part_two(&self, input: &Path) -> String {
         let content = read_file_lines(input);
         let mut sum = 0;
-        let width = content[0].len();
+        let width = content[0].chars().count();
         let content = content.into_iter().collect::<String>();
         let n = content.len();
 
