@@ -18,34 +18,27 @@ impl Problem for DayFour {
 
             // only look in front, if we are at least 4 away from the edge
             if i % width < width - j + 1 {
-                if &content.chars().skip(i).take(j).collect::<String>() == "XMAS" {
+                let horizontal = content.chars().skip(i).take(j).collect::<String>();
+                if &horizontal == "XMAS" {
                     // forward
                     sum += 1;
                 }
-                if &content.chars().skip(i).take(j).collect::<String>() == "SAMX" {
+                if &horizontal == "SAMX" {
                     // backward
                     sum += 1;
                 }
-                if &content
+                let diag = content
                     .chars()
                     .skip(i)
                     .step_by(width + 1)
                     .take(j)
-                    .collect::<String>()
-                    == "XMAS"
-                {
+                    .collect::<String>();
+                if &diag == "XMAS" {
                     // diag forward
                     sum += 1;
                 }
 
-                if &content
-                    .chars()
-                    .skip(i)
-                    .step_by(width + 1)
-                    .take(j)
-                    .collect::<String>()
-                    == "SAMX"
-                {
+                if &diag == "SAMX" {
                     // diag backward
                     sum += 1;
                 }
@@ -53,48 +46,33 @@ impl Problem for DayFour {
 
             // only look behind, if we are at least 4 away from the edge
             if i % width >= j - 1 {
-                if &content
+                let diag = content
                     .chars()
                     .skip(i)
                     .step_by(width - 1)
                     .take(j)
-                    .collect::<String>()
-                    == "XMAS"
-                {
+                    .collect::<String>();
+                if &diag == "XMAS" {
                     // -diag forward
                     sum += 1;
                 }
-                if &content
-                    .chars()
-                    .skip(i)
-                    .step_by(width - 1)
-                    .take(j)
-                    .collect::<String>()
-                    == "SAMX"
-                {
+                if &diag == "SAMX" {
                     // -diag backward
                     sum += 1;
                 }
             }
-            if &content
+
+            let vertical = content
                 .chars()
                 .skip(i)
                 .step_by(width)
                 .take(j)
-                .collect::<String>()
-                == "XMAS"
-            {
+                .collect::<String>();
+            if &vertical == "XMAS" {
                 // downwards forward
                 sum += 1;
             }
-            if &content
-                .chars()
-                .skip(i)
-                .step_by(width)
-                .take(j)
-                .collect::<String>()
-                == "SAMX"
-            {
+            if &vertical == "SAMX" {
                 // downwards backward
                 sum += 1;
             }
@@ -114,41 +92,26 @@ impl Problem for DayFour {
             // look around
             let j = 3;
 
-            // only look in front, if we are at least 4 away from the edge
             if i % width < width - 1
                 && i % width >= 1
                 && i > width + 1
-                && &content.chars().skip(i).take(1).collect::<String>() == "A"
-                && (&content
+                && content.chars().skip(i).take(1).collect::<String>() == "A"
+            {
+                let diag1 = content
                     .chars()
                     .skip(i - 1 - width)
                     .step_by(width + 1)
                     .take(j)
-                    .collect::<String>()
-                    == "MAS"
-                    || &content
-                        .chars()
-                        .skip(i - 1 - width)
-                        .step_by(width + 1)
-                        .take(j)
-                        .collect::<String>()
-                        == "SAM")
-                && (&content
+                    .collect::<String>();
+                let diag2 = content
                     .chars()
                     .skip(i + 1 - width)
                     .step_by(width - 1)
                     .take(j)
-                    .collect::<String>()
-                    == "SAM"
-                    || &content
-                        .chars()
-                        .skip(i + 1 - width)
-                        .step_by(width - 1)
-                        .take(j)
-                        .collect::<String>()
-                        == "MAS")
-            {
-                sum += 1;
+                    .collect::<String>();
+                if (&diag1 == "MAS" || &diag1 == "SAM") && (&diag2 == "SAM" || &diag2 == "MAS") {
+                    sum += 1;
+                }
             }
         }
 
