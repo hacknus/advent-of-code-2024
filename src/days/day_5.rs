@@ -105,9 +105,6 @@ impl Problem for DayFive {
                 sum += middle_page;
             }
         }
-
-        // not 6126, too low
-        // not 6925, too high
         format!("{}", sum)
     }
 }
