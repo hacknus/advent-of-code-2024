@@ -30,9 +30,9 @@ impl Ord for Page {
         if self.number == other.number {
             Ordering::Equal
         } else if self.smaller_numbers.iter().contains(&other.number) {
-            Ordering::Greater
-        } else if other.smaller_numbers.iter().contains(&self.number) {
             Ordering::Less
+        } else if other.smaller_numbers.iter().contains(&self.number) {
+            Ordering::Greater
         } else {
             Ordering::Equal
         }
@@ -124,7 +124,6 @@ impl Problem for DayFive {
             let n = numbers.len();
             let old_numbers = numbers.clone();
             numbers.sort();
-            let numbers = numbers.into_iter().rev().collect::<Vec<Page>>();
             if old_numbers != numbers {
                 let middle_page = numbers[n / 2].clone();
                 sum += middle_page.number;
