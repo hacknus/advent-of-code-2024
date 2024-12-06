@@ -80,9 +80,7 @@ impl Problem for DayFive {
                 })
                 .collect::<Vec<Page>>();
             let n = numbers.len();
-            let old_numbers = numbers.clone();
-            numbers.sort();
-            if old_numbers == numbers {
+            if numbers.is_sorted() {
                 let middle_page = numbers[n / 2].clone();
                 sum += middle_page.number;
             }
