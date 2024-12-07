@@ -31,24 +31,12 @@ impl Problem for DaySeven {
             }
 
             let n = parts.len();
-            let combinations: Vec<_> = (2..n).fold(
-                operators
-                    .iter()
-                    .cartesian_product(operators.iter())
-                    .map(|(&a, &b)| a.to_owned() + b)
-                    .collect(),
-                |acc, _| {
-                    acc.into_iter()
-                        .cartesian_product(operators.iter())
-                        .map(|(a, b)| a.to_owned() + b)
-                        .collect()
-                },
-            );
+            let combinations = (1..n).map(|_| operators).multi_cartesian_product();
 
             for combination in combinations {
                 let mut parts_to_calculate = parts.clone();
                 for i in 0..n - 1 {
-                    match combination.chars().nth(i).unwrap().to_string().as_str() {
+                    match combination[i] {
                         "*" => parts_to_calculate[i + 1] *= parts_to_calculate[i],
                         "+" => parts_to_calculate[i + 1] += parts_to_calculate[i],
                         _ => {
@@ -70,7 +58,7 @@ impl Problem for DaySeven {
         let content = read_file_lines(input);
         let mut sum = 0;
         let operators = ["+", "*", "|"];
-        for line in content.iter() {
+        'line_loop: for line in content.iter() {
             let splits = line.split(":").collect::<Vec<&str>>();
             let result = splits[0].parse::<i64>().unwrap();
             let parts = splits[1]
@@ -79,48 +67,30 @@ impl Problem for DaySeven {
                 .collect::<Vec<i64>>();
 
             let n = parts.len();
-            let combinations: Vec<_> = (2..n).fold(
-                operators
-                    .iter()
-                    .cartesian_product(operators.iter())
-                    .map(|(&a, &b)| a.to_owned() + b)
-                    .collect(),
-                |acc, _| {
-                    acc.into_iter()
-                        .cartesian_product(operators.iter())
-                        .map(|(a, b)| a.to_owned() + b)
-                        .collect()
-                },
-            );
-
-            sum += combinations
-                .into_par_iter()
-                .map(|combination| {
-                    let mut parts_to_calculate = parts.clone();
-                    for i in 0..n - 1 {
-                        match combination.chars().nth(i).unwrap().to_string().as_str() {
-                            "*" => parts_to_calculate[i + 1] *= parts_to_calculate[i],
-                            "+" => parts_to_calculate[i + 1] += parts_to_calculate[i],
-                            "|" => {
-                                parts_to_calculate[i + 1] =
-                                    concat(parts_to_calculate[i], parts_to_calculate[i + 1])
-                            }
-
-                            _ => {
-                                unreachable!()
-                            }
+            let combinations = (1..n).map(|_| operators).multi_cartesian_product();
+            'combination_loop: for combination in combinations {
+                let mut parts_to_calculate = parts.clone();
+                for i in 0..n - 1 {
+                    match combination[i] {
+                        "*" => parts_to_calculate[i + 1] *= parts_to_calculate[i],
+                        "+" => parts_to_calculate[i + 1] += parts_to_calculate[i],
+                        "|" => {
+                            parts_to_calculate[i + 1] =
+                                concat(parts_to_calculate[i], parts_to_calculate[i + 1])
                         }
-                        if parts_to_calculate[i + 1] > result {
-                            return 0;
+                        _ => {
+                            unreachable!()
                         }
                     }
-                    if parts_to_calculate.last().unwrap() == &result {
-                        return result;
+                    if parts_to_calculate[i + 1] > result {
+                        continue 'combination_loop;
                     }
-                    0
-                })
-                .max()
-                .unwrap();
+                }
+                if parts_to_calculate.last().unwrap() == &result {
+                    sum += result;
+                    continue 'line_loop;
+                }
+            }
         }
         format!("{}", sum)
     }
