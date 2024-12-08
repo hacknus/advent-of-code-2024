@@ -7,22 +7,19 @@ pub struct DayEight {}
 
 impl Problem for DayEight {
     fn part_one(&self, input: &Path) -> String {
-        let content: Vec<Vec<String>> = read_file_lines(input)
-            .iter()
-            .map(|line| line.chars().map(|c| c.to_string()).collect::<Vec<String>>())
-            .collect();
+        let content = read_file_lines(input);
         let width = content[0].len() as isize;
         let height = content.len() as isize;
 
         let mut antenna_positions = Vec::new();
         let mut antenna_names = Vec::new();
 
-        for x in 0..width {
-            for y in 0..height {
-                if &content[y as usize][x as usize] != "." {
+        for (x, line) in content.iter().enumerate() {
+            for (y, c) in line.char_indices() {
+                if c != '.' {
                     // found antenna
-                    antenna_positions.push([x, y]);
-                    antenna_names.push(content[y as usize][x as usize].clone())
+                    antenna_positions.push([x as isize, y as isize]);
+                    antenna_names.push(c)
                 }
             }
         }
@@ -39,7 +36,7 @@ impl Problem for DayEight {
                 let yj = antenna_positions[j][1];
                 let ant_j = &antenna_names[j];
 
-                if ant_i != ant_j || (x == xj && y == yj) {
+                if ant_i != ant_j || i == j {
                     continue;
                 }
 
@@ -80,22 +77,19 @@ impl Problem for DayEight {
     }
 
     fn part_two(&self, input: &Path) -> String {
-        let content: Vec<Vec<String>> = read_file_lines(input)
-            .iter()
-            .map(|line| line.chars().map(|c| c.to_string()).collect::<Vec<String>>())
-            .collect();
+        let content = read_file_lines(input);
         let width = content[0].len() as isize;
         let height = content.len() as isize;
 
         let mut antenna_positions = Vec::new();
         let mut antenna_names = Vec::new();
 
-        for x in 0..width {
-            for y in 0..height {
-                if &content[y as usize][x as usize] != "." {
+        for (x, line) in content.iter().enumerate() {
+            for (y, c) in line.char_indices() {
+                if c != '.' {
                     // found antenna
-                    antenna_positions.push([x, y]);
-                    antenna_names.push(content[y as usize][x as usize].clone())
+                    antenna_positions.push([x as isize, y as isize]);
+                    antenna_names.push(c)
                 }
             }
         }
@@ -112,7 +106,7 @@ impl Problem for DayEight {
                 let yj = antenna_positions[j][1];
                 let ant_j = &antenna_names[j];
 
-                if ant_i != ant_j || (x == xj && y == yj) {
+                if ant_i != ant_j || i == j {
                     continue;
                 }
 
