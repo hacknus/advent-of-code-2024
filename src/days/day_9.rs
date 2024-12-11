@@ -7,56 +7,51 @@ pub struct DayNine {}
 impl Problem for DayNine {
     fn part_one(&self, input: &Path) -> String {
         let content = fs::read_to_string(input)
-            .unwrap()
+            .expect("Failed to read input file")
             .chars()
-            .map(|c| c.to_digit(10).unwrap() as usize)
-            .collect::<Vec<usize>>();
+            .filter_map(|c| c.to_digit(10))
+            .map(|d| d as usize)
+            .collect::<Vec<_>>();
 
-        let spaces = content
-            .iter()
-            .skip(1)
-            .step_by(2)
-            .copied()
-            .collect::<Vec<usize>>();
-        let files = content.iter().step_by(2).copied().collect::<Vec<usize>>();
+        let spaces = content.iter().skip(1).step_by(2);
+        let files = content.iter().step_by(2);
 
+        let total_files: usize = files.clone().sum();
         let mut file_system = vec![];
-        let mut k = files.len() as isize - 1;
-        let mut right_end = files[k as usize] as isize;
-        'main_loop: for (i, file) in files.iter().enumerate() {
-            for _ in 0..*file {
+        let mut k = files.clone().count() - 1;
+
+        'main_loop: for (i, &file) in files.clone().enumerate() {
+            for _ in 0..file {
                 file_system.push(i);
-                if file_system.len() == files.iter().sum::<usize>() {
+                if file_system.len() == total_files {
                     break 'main_loop;
                 }
             }
-            if i < spaces.len() - 1 {
-                for _ in 0..spaces[i] {
+
+            if let Some(&space) = spaces.clone().nth(i) {
+                for _ in 0..space {
+                    let mut right_end = *files.clone().nth(k).unwrap(); // Ensure `right_end` is a value, not a reference
+
                     if right_end > 0 {
-                        file_system.push(k as usize);
-                        right_end -= 1;
-                        if file_system.len() == files.iter().sum::<usize>() {
-                            break 'main_loop;
-                        }
+                        file_system.push(k);
                     } else {
                         k -= 1;
-                        right_end = files[k as usize] as isize;
-                        file_system.push(k as usize);
-                        right_end -= 1;
-                        if file_system.len() == files.iter().sum::<usize>() {
-                            break 'main_loop;
-                        }
+                        right_end = *files.clone().nth(k).unwrap() - 1; // Correct assignment with dereference
+                        file_system.push(k);
+                    }
+                    right_end -= 1; // Subtract directly as `right_end` is now a `usize`
+
+                    if file_system.len() == total_files {
+                        break 'main_loop;
                     }
                 }
             }
         }
 
-        let checksum = file_system
-            .iter()
-            .enumerate()
-            .map(|(i, d)| d * i)
-            .sum::<usize>();
-        format!("{}", checksum)
+        println!("{:?}", file_system);
+
+        let checksum: usize = file_system.iter().enumerate().map(|(i, &d)| d * i).sum();
+        checksum.to_string()
     }
 
     fn part_two(&self, input: &Path) -> String {
