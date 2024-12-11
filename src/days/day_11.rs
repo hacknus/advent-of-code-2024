@@ -7,10 +7,7 @@ pub struct DayEleven {}
 
 pub fn split_number_in_half(number: usize) -> (usize, usize) {
     let digits = (number as f64).log10() as usize + 1;
-    let mut left = number;
-    for _ in 0..digits / 2 {
-        left /= 10;
-    }
+    let mut left = number / 10_usize.pow((digits / 2) as u32);
     (left, number % left)
 }
 
