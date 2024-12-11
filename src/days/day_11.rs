@@ -5,10 +5,14 @@ use std::path::Path;
 
 pub struct DayEleven {}
 
-pub fn split_number_in_middle(number: usize) -> (usize, usize) {
+pub fn split_number_in_middle(number: usize) -> Option<(usize, usize)> {
     let digits = (number as f32).log10() as usize + 1;
-    let divisor = 10_usize.pow((digits / 2) as u32);
-    (number / divisor, number % divisor)
+    if digits % 2 == 0 {
+        let divisor = 10_usize.pow((digits / 2) as u32);
+        Some((number / divisor, number % divisor))
+    } else {
+        None
+    }
 }
 
 pub fn branch(
@@ -26,8 +30,7 @@ pub fn branch(
     let mut sum = 0;
     if number == 0 {
         sum += branch(blink + 1, max_blink, 1, states);
-    } else if number.to_string().len() % 2 == 0 {
-        let (left, right) = split_number_in_middle(number);
+    } else if let Some((left, right)) = split_number_in_middle(number) {
         sum += branch(blink + 1, max_blink, left, states);
         sum += branch(blink + 1, max_blink, right, states);
     } else {
