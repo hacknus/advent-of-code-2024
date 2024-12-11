@@ -39,7 +39,7 @@ pub fn branch(
 
 impl Problem for DayEleven {
     fn part_one(&self, input: &Path) -> String {
-        let mut stones = fs::read_to_string(input)
+        let stones = fs::read_to_string(input)
             .unwrap()
             .split_whitespace()
             .map(|s| s.parse::<usize>().unwrap())
@@ -55,7 +55,7 @@ impl Problem for DayEleven {
     }
 
     fn part_two(&self, input: &Path) -> String {
-        let mut stones = fs::read_to_string(input)
+        let stones = fs::read_to_string(input)
             .unwrap()
             .split_whitespace()
             .map(|s| s.parse::<usize>().unwrap())
