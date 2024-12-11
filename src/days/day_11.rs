@@ -1,11 +1,18 @@
 use crate::problem::Problem;
-use std::cell::RefCell;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
-use std::rc::Rc;
 
 pub struct DayEleven {}
+
+pub fn split_number_in_half(number: usize) -> (usize, usize) {
+    let digits = (number as f64).log10() as usize + 1;
+    let mut left = number;
+    for _ in 0..digits / 2 {
+        left /= 10;
+    }
+    (left, number % left)
+}
 
 pub fn branch(
     blink: usize,
@@ -23,20 +30,7 @@ pub fn branch(
     if number == 0 {
         sum += branch(blink + 1, max_blink, 1, states);
     } else if number.to_string().len() % 2 == 0 {
-        let string = number.to_string();
-        let n = string.len();
-        let left = string
-            .chars()
-            .take(n / 2)
-            .collect::<String>()
-            .parse::<usize>()
-            .unwrap();
-        let right = string
-            .chars()
-            .skip(n / 2)
-            .collect::<String>()
-            .parse::<usize>()
-            .unwrap();
+        let (left, right) = split_number_in_half(number);
         sum += branch(blink + 1, max_blink, left, states);
         sum += branch(blink + 1, max_blink, right, states);
     } else {
