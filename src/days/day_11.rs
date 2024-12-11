@@ -6,7 +6,7 @@ use std::path::Path;
 pub struct DayEleven {}
 
 pub fn split_number_in_middle(number: usize) -> (usize, usize) {
-    let digits = (number as f64).log10() as usize + 1;
+    let digits = (number as f32).log10() as usize + 1;
     let divisor = 10_usize.pow((digits / 2) as u32);
     (number / divisor, number % divisor)
 }
