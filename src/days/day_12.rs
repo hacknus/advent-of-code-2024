@@ -1,17 +1,30 @@
 use crate::io::read_file_lines;
 use crate::problem::Problem;
+use ndarray::{s, Array2};
 use std::collections::HashSet;
 use std::path::Path;
 
 pub struct DayTwelve {}
 
+fn differentiate_x(grid: &Array2<isize>) -> Array2<isize> {
+    let slice_x = grid.slice(s![.., 1..]); // Columns 1 to end
+    let slice_x_prev = grid.slice(s![.., ..-1]); // Columns 0 to end-1
+    &slice_x - &slice_x_prev
+}
+
+fn differentiate_y(grid: &Array2<isize>) -> Array2<isize> {
+    let slice_y = grid.slice(s![1.., ..]); // Rows 1 to end
+    let slice_y_prev = grid.slice(s![..-1, ..]); // Rows 0 to end-1
+    &slice_y - &slice_y_prev
+}
+
 pub fn look_around(
-    x: usize,
-    y: usize,
+    x: isize,
+    y: isize,
     c: char,
     map: &Vec<Vec<char>>,
-    plants: &mut HashSet<[usize; 2]>,
-    nonce: &mut HashSet<[usize; 2]>,
+    plants: &mut HashSet<[isize; 2]>,
+    nonce: &mut HashSet<[isize; 2]>,
 ) {
     for dx in -1..=1_isize {
         for dy in -1..=1_isize {
@@ -27,16 +40,16 @@ pub fn look_around(
             if y == 0 && dy == -1 {
                 continue;
             }
-            if y == map.len() - 1 && dy == 1 {
+            if y == map.len() as isize - 1 && dy == 1 {
                 continue;
             }
-            if x == map[0].len() - 1 && dx == 1 {
+            if x == map[0].len() as isize - 1 && dx == 1 {
                 continue;
             }
-            let xi = (x as isize + dx) as usize;
-            let yi = (y as isize + dy) as usize;
+            let xi = x + dx;
+            let yi = y + dy;
 
-            if c == map[yi][xi] && !plants.contains(&[xi, yi]) {
+            if c == map[yi as usize][xi as usize] && !plants.contains(&[xi, yi]) {
                 plants.insert([xi, yi]);
                 nonce.insert([xi, yi]);
                 look_around(xi, yi, c, map, plants, nonce);
@@ -45,301 +58,13 @@ pub fn look_around(
     }
 }
 
-pub enum Direction {
-    Up,
-    Right,
-    Down,
-    Left,
-}
-
-impl Direction {
-    pub fn to_delta(&self) -> (isize, isize) {
-        match self {
-            Direction::Up => (0, -1),
-            Direction::Right => (1, 0),
-            Direction::Down => (0, 1),
-            Direction::Left => (-1, 0),
-        }
-    }
-}
-
-pub fn look_in_front(
-    x: usize,
-    y: usize,
-    direction: Direction,
-    plants: &mut HashSet<[usize; 2]>,
-) -> (Direction, [usize; 2]) {
-    let delta = direction.to_delta();
-    let position = [x as isize + delta.0, y as isize + delta.1];
-
-    // if !plants.contains(&[x, y - 1]) {
-    //     // the one up is a legit  tile, we do not change direction
-    //     if plants.contains(&[x + 1, y - 1]) {
-    //         // is an inside tile
-    //         if !plants.contains(&[x + 1, y]) {
-    //             // move right
-    //             x += 1;
-    //             direction_change_counter += 1;
-    //         }
-    //     } else if plants.contains(&[x - 1, y - 1]) {
-    //         if !plants.contains(&[x - 1, y]) {
-    //             // move left
-    //             x -= 1;
-    //             direction_change_counter += 1;
-    //         }
-    //     } else {
-    //         // move up
-    //         y -= 1;
-    //     }
-    // }
-    todo!()
-}
-
-pub fn count_sides(
-    mut x: usize,
-    mut y: usize,
-    mut direction_change_counter: usize,
-    dir: Direction,
-    map: &Vec<Vec<char>>,
-    plants: &mut HashSet<[usize; 2]>,
-) {
-    // let's go clockwise
-    match dir {
-        Direction::Up => {
-            // look around for tiles
-            if !plants.contains(&[x, y - 1]) {
-                // the one up is a legit  tile, we do not change direction
-                if plants.contains(&[x + 1, y - 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x + 1, y]) {
-                        // move right
-                        x += 1;
-                        direction_change_counter += 1;
-                    }
-                } else if plants.contains(&[x - 1, y - 1]) {
-                    if !plants.contains(&[x - 1, y]) {
-                        // move left
-                        x -= 1;
-                        direction_change_counter += 1;
-                    }
-                } else {
-                    // move up
-                    y -= 1;
-                }
-            } else if !plants.contains(&[x + 1, y]) {
-                // the one right is a legit  tile, we do not change direction
-                if plants.contains(&[x + 1, y + 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x, y + 1]) {
-                        // move down
-                    }
-                } else if plants.contains(&[x + 1, y - 1]) {
-                    if !plants.contains(&[x, y - 1]) {
-                        // move up
-                        y -= 1;
-                    }
-                } else {
-                    // move right
-                    x += 1;
-                }
-            } else if !plants.contains(&[x - 1, y]) {
-                // the one left is a legit  tile, we do not change direction
-                if plants.contains(&[x - 1, y + 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x, y + 1]) {
-                        // move down
-                        y += 1;
-                    }
-                } else if plants.contains(&[x - 1, y - 1]) {
-                    if !plants.contains(&[x, y - 1]) {
-                        // move up
-                        y -= 1;
-                    }
-                } else {
-                    // move left
-                    x -= 1;
-                }
-            } else {
-                unreachable!()
-            }
-        }
-        Direction::Right => {
-            if !plants.contains(&[x + 1, y]) {
-                // the one right is a legit  tile, we do not change direction
-                if plants.contains(&[x + 1, y + 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x, y + 1]) {
-                        // move down
-                        y += 1;
-                    }
-                } else if plants.contains(&[x + 1, y - 1]) {
-                    if !plants.contains(&[x, y - 1]) {
-                        // move up
-                        y -= 1;
-                    }
-                } else {
-                    // move right
-                    x += 1;
-                }
-            } else if !plants.contains(&[x, y + 1]) {
-                // the one down is a legit  tile, we do not change direction
-                if plants.contains(&[x + 1, y + 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x + 1, y]) {
-                        // move right
-                        x += 1;
-                    }
-                } else if plants.contains(&[x - 1, y + 1]) {
-                    if !plants.contains(&[x - 1, y]) {
-                        // move left
-                        x -= 1;
-                    }
-                } else {
-                    // move down
-                    y += 1;
-                }
-            } else if !plants.contains(&[x, y - 1]) {
-                // the one up is a legit  tile, we do not change direction
-                if plants.contains(&[x + 1, y - 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x + 1, y]) {
-                        // move right
-                        x += 1;
-                    }
-                } else if plants.contains(&[x - 1, y - 1]) {
-                    if !plants.contains(&[x - 1, y]) {
-                        // move left
-                        x -= 1;
-                    }
-                } else {
-                    // move up
-                    y -= 1;
-                }
-            } else {
-                unreachable!()
-            }
-        }
-        Direction::Down => {
-            if !plants.contains(&[x, y + 1]) {
-                // the one down is a legit  tile, we do not change direction
-                if plants.contains(&[x + 1, y + 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x + 1, y]) {
-                        // move right
-                        x += 1;
-                    }
-                } else if plants.contains(&[x - 1, y + 1]) {
-                    if !plants.contains(&[x - 1, y]) {
-                        // move left
-                        x -= 1;
-                    }
-                } else {
-                    // move down
-                    y += 1;
-                }
-            } else if !plants.contains(&[x + 1, y]) {
-                // the one right is a legit  tile, we do not change direction
-                if plants.contains(&[x + 1, y + 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x, y + 1]) {
-                        // move down
-                        y += 1;
-                    }
-                } else if plants.contains(&[x + 1, y - 1]) {
-                    if !plants.contains(&[x, y - 1]) {
-                        // move up
-                        y -= 1;
-                    }
-                } else {
-                    // move right
-                    x += 1;
-                }
-            } else if !plants.contains(&[x - 1, y]) {
-                // the one left is a legit  tile, we do not change direction
-                if plants.contains(&[x - 1, y + 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x, y + 1]) {
-                        // move down
-                        y += 1;
-                    }
-                } else if plants.contains(&[x - 1, y - 1]) {
-                    if !plants.contains(&[x, y - 1]) {
-                        // move up
-                        y -= 1;
-                    }
-                } else {
-                    // move left
-                    x -= 1;
-                }
-            } else {
-                unreachable!()
-            }
-        }
-        Direction::Left => {
-            if !plants.contains(&[x - 1, y]) {
-                // the one left is a legit  tile, we do not change direction
-                if plants.contains(&[x - 1, y + 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x, y + 1]) {
-                        // move down
-                        y += 1;
-                    }
-                } else if plants.contains(&[x - 1, y - 1]) {
-                    if !plants.contains(&[x, y - 1]) {
-                        // move up
-                        y -= 1;
-                    }
-                } else {
-                    // move left
-                    x -= 1;
-                }
-            } else if !plants.contains(&[x, y + 1]) {
-                // the one down is a legit  tile, we do not change direction
-                if plants.contains(&[x + 1, y + 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x + 1, y]) {
-                        // move right
-                        x += 1;
-                    }
-                } else if plants.contains(&[x - 1, y + 1]) {
-                    if !plants.contains(&[x - 1, y]) {
-                        // move left
-                        x -= 1;
-                    }
-                } else {
-                    // move down
-                    y += 1;
-                }
-            } else if !plants.contains(&[x, y - 1]) {
-                // the one up is a legit  tile, we do not change direction
-                if plants.contains(&[x + 1, y - 1]) {
-                    // is an inside tile
-                    if !plants.contains(&[x + 1, y]) {
-                        // move right
-                        x += 1;
-                    }
-                } else if plants.contains(&[x - 1, y - 1]) {
-                    if !plants.contains(&[x - 1, y]) {
-                        // move left
-                        x -= 1;
-                    }
-                } else {
-                    // move up
-                    y -= 1;
-                }
-            } else {
-                unreachable!()
-            }
-        }
-    }
-}
 impl Problem for DayTwelve {
     fn part_one(&self, input: &Path) -> String {
         let content = read_file_lines(input);
         let width = content[0].len();
         let height = content.len();
 
-        let mut plants: Vec<HashSet<[usize; 2]>> = vec![];
+        let mut plants: Vec<HashSet<[isize; 2]>> = vec![];
 
         let map = content
             .iter()
@@ -350,12 +75,19 @@ impl Problem for DayTwelve {
             'x_loop: for x in 0..width {
                 // this is a start point for the plant
                 // check if it is already corresponding to a plant set
-                if nonce.contains(&[x, y]) {
+                if nonce.contains(&[x as isize, y as isize]) {
                     continue 'x_loop;
                 }
                 let mut plant_set = HashSet::new();
-                plant_set.insert([x, y]);
-                look_around(x, y, map[y][x], &map, &mut plant_set, &mut nonce);
+                plant_set.insert([x as isize, y as isize]);
+                look_around(
+                    x as isize,
+                    y as isize,
+                    map[y][x],
+                    &map,
+                    &mut plant_set,
+                    &mut nonce,
+                );
                 plants.push(plant_set);
             }
         }
@@ -363,10 +95,11 @@ impl Problem for DayTwelve {
         // calculate perimeter
         let mut sum = 0;
         for plant in plants.iter() {
-            let mut perimeter = 0;
+            let mut num_sides = 0;
             for plant_location in plant.iter() {
                 let x = plant_location[0];
                 let y = plant_location[1];
+                let mut num_sides_i = 4;
                 for dx in -1..=1_isize {
                     for dy in -1..=1_isize {
                         if dx == 0 && dy == 0 {
@@ -375,23 +108,103 @@ impl Problem for DayTwelve {
                         if dx.abs() == 1 && dy.abs() == 1 {
                             continue;
                         }
-                        let xi = (x as isize + dx) as usize;
-                        let yi = (y as isize + dy) as usize;
-
-                        if !plant.contains(&[xi, yi]) {
-                            perimeter += 1;
+                        let xi = x + dx;
+                        let yi = y + dy;
+                        if plant.contains(&[xi, yi]) {
+                            num_sides_i -= 1;
                         }
                     }
                 }
+                num_sides += num_sides_i;
             }
-            sum += perimeter * plant.len();
+            sum += num_sides * plant.len();
         }
-
-        dbg!(&plants.len());
         format!("{}", sum)
     }
 
     fn part_two(&self, input: &Path) -> String {
-        format!("{}", "Part two not yet implemented.")
+        let content = read_file_lines(input);
+        let width = content[0].len();
+        let height = content.len();
+
+        let mut plants: Vec<HashSet<[isize; 2]>> = vec![];
+
+        let map = content
+            .iter()
+            .map(|l| l.chars().collect::<Vec<char>>())
+            .collect::<Vec<Vec<char>>>();
+        let mut nonce = HashSet::new();
+        for y in 0..height {
+            'x_loop: for x in 0..width {
+                // this is a start point for the plant
+                // check if it is already corresponding to a plant set
+                if nonce.contains(&[x as isize, y as isize]) {
+                    continue 'x_loop;
+                }
+                let mut plant_set = HashSet::new();
+                plant_set.insert([x as isize, y as isize]);
+                look_around(
+                    x as isize,
+                    y as isize,
+                    map[y][x],
+                    &map,
+                    &mut plant_set,
+                    &mut nonce,
+                );
+                plants.push(plant_set);
+            }
+        }
+
+        // make grid
+        let mut sum = 0;
+        for plant in plants.iter() {
+            let mut min = [usize::MAX, usize::MAX];
+            let mut max = [0, 0];
+            // TODO: this should be simplified
+            for plant_location in plant.iter() {
+                let x = plant_location[0];
+                let y = plant_location[1];
+                min[0] = min[0].min(x as usize);
+                min[1] = min[1].min(y as usize);
+                max[0] = max[0].max(x as usize);
+                max[1] = max[1].max(y as usize);
+            }
+
+            // make grid for this plant, pad it on the edges
+            let width = max[0] - min[0] + 1 + 2;
+            let height = max[1] - min[1] + 1 + 2;
+            let mut grid = Array2::zeros((width, height));
+
+            for plant_location in plant.iter() {
+                *grid
+                    .get_mut((
+                        plant_location[0] as usize + 1 - min[0],
+                        plant_location[1] as usize + 1 - min[1],
+                    ))
+                    .unwrap() = 1_isize;
+            }
+
+            let mut num_sides = 0;
+            // differentiate in x direction
+            let diff_x = differentiate_x(&grid);
+            let diff_x_diff_y = differentiate_y(&diff_x);
+            num_sides += &diff_x_diff_y
+                .iter()
+                .map(|x| x.abs() as usize)
+                .sum::<usize>()
+                / 2;
+
+            let diff_y = differentiate_y(&grid);
+            let diff_y_diff_x = differentiate_x(&diff_y);
+            num_sides += &diff_y_diff_x
+                .iter()
+                .map(|x| x.abs() as usize)
+                .sum::<usize>()
+                / 2;
+
+            sum += num_sides * plant.len();
+        }
+
+        format!("{}", sum)
     }
 }
