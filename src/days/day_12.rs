@@ -100,19 +100,11 @@ impl Problem for DayTwelve {
                 let x = plant_location[0];
                 let y = plant_location[1];
                 let mut num_sides_i = 4;
-                for dx in -1..=1_isize {
-                    for dy in -1..=1_isize {
-                        if dx == 0 && dy == 0 {
-                            continue;
-                        }
-                        if dx.abs() == 1 && dy.abs() == 1 {
-                            continue;
-                        }
-                        let xi = x + dx;
-                        let yi = y + dy;
-                        if plant.contains(&[xi, yi]) {
-                            num_sides_i -= 1;
-                        }
+                for (dx, dy) in [(-1, 0), (1, 0), (0, 1), (0, -1)] {
+                    let xi = x + dx;
+                    let yi = y + dy;
+                    if plant.contains(&[xi, yi]) {
+                        num_sides_i -= 1;
                     }
                 }
                 num_sides += num_sides_i;
