@@ -26,6 +26,7 @@ fn extract_coordiantes(line: &str, parser_state: &ParsingState) -> (f64, f64) {
 impl Problem for DayThirteen {
     fn part_one(&self, input: &Path) -> String {
         let mut content = read_file_lines(input);
+        // add empty line for calculation step below
         content.push("\n".to_string());
 
         let mut sum = 0.0;
@@ -63,6 +64,7 @@ impl Problem for DayThirteen {
 
     fn part_two(&self, input: &Path) -> String {
         let mut content = read_file_lines(input);
+        // add empty line for calculation step below
         content.push("\n".to_string());
 
         let mut sum = 0.0;
@@ -81,6 +83,7 @@ impl Problem for DayThirteen {
                 (x_b, y_b) = extract_coordiantes(line, &ParsingState::B);
             } else if line.contains("Prize:") {
                 (prize_x, prize_y) = extract_coordiantes(line, &ParsingState::Prize);
+                // add offset for ex 2
                 prize_x += 10000000000000.0;
                 prize_y += 10000000000000.0;
             } else {
@@ -96,8 +99,6 @@ impl Problem for DayThirteen {
                 }
             }
         }
-        // 459236326669, too low
-        // 100590241234973, too low
         format!("{}", sum as usize)
     }
 }
