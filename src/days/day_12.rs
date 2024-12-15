@@ -3,6 +3,7 @@ use crate::problem::Problem;
 use ndarray::{s, Array2};
 use std::collections::HashSet;
 use std::path::Path;
+use std::slice::Iter;
 
 pub struct DayTwelve {}
 
@@ -26,34 +27,26 @@ pub fn look_around(
     plants: &mut HashSet<[isize; 2]>,
     nonce: &mut HashSet<[isize; 2]>,
 ) {
-    for dx in -1..=1_isize {
-        for dy in -1..=1_isize {
-            if dx == 0 && dy == 0 {
-                continue;
-            }
-            if dx.abs() == 1 && dy.abs() == 1 {
-                continue;
-            }
-            if x == 0 && dx == -1 {
-                continue;
-            }
-            if y == 0 && dy == -1 {
-                continue;
-            }
-            if y == map.len() as isize - 1 && dy == 1 {
-                continue;
-            }
-            if x == map[0].len() as isize - 1 && dx == 1 {
-                continue;
-            }
-            let xi = x + dx;
-            let yi = y + dy;
+    for (dx, dy) in [(-1, 0), (1, 0), (0, 1), (0, -1)] {
+        if x == 0 && dx == -1 {
+            continue;
+        }
+        if y == 0 && dy == -1 {
+            continue;
+        }
+        if y == map.len() as isize - 1 && dy == 1 {
+            continue;
+        }
+        if x == map[0].len() as isize - 1 && dx == 1 {
+            continue;
+        }
+        let xi = x + dx;
+        let yi = y + dy;
 
-            if c == map[yi as usize][xi as usize] && !plants.contains(&[xi, yi]) {
-                plants.insert([xi, yi]);
-                nonce.insert([xi, yi]);
-                look_around(xi, yi, c, map, plants, nonce);
-            }
+        if c == map[yi as usize][xi as usize] && !plants.contains(&[xi, yi]) {
+            plants.insert([xi, yi]);
+            nonce.insert([xi, yi]);
+            look_around(xi, yi, c, map, plants, nonce);
         }
     }
 }
