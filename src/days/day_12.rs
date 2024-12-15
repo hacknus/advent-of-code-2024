@@ -3,7 +3,6 @@ use crate::problem::Problem;
 use ndarray::{s, Array2};
 use std::collections::HashSet;
 use std::path::Path;
-use std::slice::Iter;
 
 pub struct DayTwelve {}
 
