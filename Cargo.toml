@@ -16,6 +16,7 @@ ndarray = "0.16.1"
 indexmap = "2.1.0"
 colored = "2.1.0"
 rayon = "1.10.0"
+video-rs = { version = "0.10.3", features = ["ndarray"] }
 
 [profile.release]
 overflow-checks = true
