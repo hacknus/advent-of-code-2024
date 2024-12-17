@@ -4,6 +4,16 @@ use std::path::Path;
 
 pub struct DaySeventeen {}
 
+pub fn combo(literal_operand: i32, reg_a: i32, reg_b: i32, reg_c: i32) -> i32 {
+    match literal_operand {
+        0_i32..=3_i32 => literal_operand,
+        4 => reg_a,
+        5 => reg_b,
+        6 => reg_c,
+        _ => unreachable!(),
+    }
+}
+
 pub fn instruction(
     mut instr_pointer: usize,
     reg_a: &mut i32,
@@ -22,14 +32,7 @@ pub fn instruction(
     match op_code {
         0 => {
             // adv
-            let combo = match literal_operand {
-                0_i32..=3_i32 => literal_operand,
-                4 => *reg_a,
-                5 => *reg_b,
-                6 => *reg_c,
-                _ => unreachable!(),
-            };
-            *reg_a /= 2_i32.pow(combo as u32);
+            *reg_a /= 2_i32.pow(combo(literal_operand, *reg_a, *reg_b, *reg_c) as u32);
             instr_pointer += 2;
         }
         1 => {
@@ -39,14 +42,7 @@ pub fn instruction(
         }
         2 => {
             // bst
-            let combo = match literal_operand {
-                0_i32..=3_i32 => literal_operand,
-                4 => *reg_a,
-                5 => *reg_b,
-                6 => *reg_c,
-                _ => unreachable!(),
-            };
-            *reg_b = combo % 8;
+            *reg_b = combo(literal_operand, *reg_a, *reg_b, *reg_c) % 8;
             instr_pointer += 2;
         }
         3 => {
@@ -64,38 +60,17 @@ pub fn instruction(
         }
         5 => {
             // out
-            let combo = match literal_operand {
-                0_i32..=3_i32 => literal_operand,
-                4 => *reg_a,
-                5 => *reg_b,
-                6 => *reg_c,
-                _ => unreachable!(),
-            };
-            output.push(combo % 8);
+            output.push(combo(literal_operand, *reg_a, *reg_b, *reg_c) % 8);
             instr_pointer += 2;
         }
         6 => {
             // bdv
-            let combo = match literal_operand {
-                0_i32..=3_i32 => literal_operand,
-                4 => *reg_a,
-                5 => *reg_b,
-                6 => *reg_c,
-                _ => unreachable!(),
-            };
-            *reg_b = *reg_a / 2_i32.pow(combo as u32);
+            *reg_b = *reg_a / 2_i32.pow(combo(literal_operand, *reg_a, *reg_b, *reg_c) as u32);
             instr_pointer += 2;
         }
         7 => {
             // cdv
-            let combo = match literal_operand {
-                0_i32..=3_i32 => literal_operand,
-                4 => *reg_a,
-                5 => *reg_b,
-                6 => *reg_c,
-                _ => unreachable!(),
-            };
-            *reg_c = *reg_a / 2_i32.pow(combo as u32);
+            *reg_c = *reg_a / 2_i32.pow(combo(literal_operand, *reg_a, *reg_b, *reg_c) as u32);
             instr_pointer += 2;
         }
         _ => unreachable!(),
