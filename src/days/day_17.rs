@@ -9,7 +9,7 @@ pub fn instruction(
     reg_a: &mut i32,
     reg_b: &mut i32,
     reg_c: &mut i32,
-    program: &mut Vec<i32>,
+    program: &Vec<i32>,
     output: &mut Vec<i32>,
 ) {
     if instr_pointer >= program.len() {
@@ -19,26 +19,33 @@ pub fn instruction(
     let op_code = program[instr_pointer];
     let literal_operand = program[instr_pointer + 1];
 
-    let combo = match literal_operand {
-        0_i32..=3_i32 => literal_operand,
-        4 => *reg_a,
-        5 => *reg_b,
-        6 => *reg_c,
-        _ => unreachable!(),
-    };
     match op_code {
         0 => {
             // adv
+            let combo = match literal_operand {
+                0_i32..=3_i32 => literal_operand,
+                4 => *reg_a,
+                5 => *reg_b,
+                6 => *reg_c,
+                _ => unreachable!(),
+            };
             *reg_a /= 2_i32.pow(combo as u32);
             instr_pointer += 2;
         }
         1 => {
             // bxl
-            *reg_b |= literal_operand;
+            *reg_b ^= literal_operand;
             instr_pointer += 2;
         }
         2 => {
             // bst
+            let combo = match literal_operand {
+                0_i32..=3_i32 => literal_operand,
+                4 => *reg_a,
+                5 => *reg_b,
+                6 => *reg_c,
+                _ => unreachable!(),
+            };
             *reg_b = combo % 8;
             instr_pointer += 2;
         }
@@ -57,16 +64,37 @@ pub fn instruction(
         }
         5 => {
             // out
+            let combo = match literal_operand {
+                0_i32..=3_i32 => literal_operand,
+                4 => *reg_a,
+                5 => *reg_b,
+                6 => *reg_c,
+                _ => unreachable!(),
+            };
             output.push(combo % 8);
             instr_pointer += 2;
         }
         6 => {
             // bdv
+            let combo = match literal_operand {
+                0_i32..=3_i32 => literal_operand,
+                4 => *reg_a,
+                5 => *reg_b,
+                6 => *reg_c,
+                _ => unreachable!(),
+            };
             *reg_b = *reg_a / 2_i32.pow(combo as u32);
             instr_pointer += 2;
         }
         7 => {
             // cdv
+            let combo = match literal_operand {
+                0_i32..=3_i32 => literal_operand,
+                4 => *reg_a,
+                5 => *reg_b,
+                6 => *reg_c,
+                _ => unreachable!(),
+            };
             *reg_c = *reg_a / 2_i32.pow(combo as u32);
             instr_pointer += 2;
         }
@@ -94,14 +122,6 @@ impl Problem for DaySeventeen {
             .unwrap()
             .parse::<i32>()
             .unwrap();
-        let reg_c = content
-            .get(2)
-            .unwrap()
-            .split(": ")
-            .last()
-            .unwrap()
-            .parse::<i32>()
-            .unwrap();
         let mut reg_c = content
             .get(2)
             .unwrap()
@@ -110,7 +130,7 @@ impl Problem for DaySeventeen {
             .unwrap()
             .parse::<i32>()
             .unwrap();
-        let mut program = content
+        let program = content
             .get(4)
             .unwrap()
             .split(": ")
@@ -121,16 +141,7 @@ impl Problem for DaySeventeen {
             .collect::<Vec<i32>>();
 
         let mut output = vec![];
-        instruction(
-            0,
-            &mut reg_a,
-            &mut reg_b,
-            &mut reg_c,
-            &mut program,
-            &mut output,
-        );
-
-        // not 7,1,5,3,6,2,6,7,5
+        instruction(0, &mut reg_a, &mut reg_b, &mut reg_c, &program, &mut output);
 
         output
             .iter()
