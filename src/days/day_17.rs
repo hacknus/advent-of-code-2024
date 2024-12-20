@@ -117,7 +117,6 @@ pub fn instruction_reverse(
                 6 => *reg_c,
                 _ => unreachable!(),
             };
-            // breaks down here, since 3//8 is 0, but 0*8 is not 3
             for i in 0..2_i64.pow(combo as u32) {
                 let mut temp_reg_a = *reg_a * 2_i64.pow(combo as u32) + i;
                 let new_instr_pointer = if instr_pointer > 1 {
@@ -228,8 +227,7 @@ pub fn instruction_reverse(
                 _ => unreachable!(),
             };
             for i in 0..2_i64.pow(combo as u32) {
-                let mut temp_reg_b = *reg_a * 2_i64.pow(combo as u32) + i;
-                let mut temp_reg_a = *reg_a;
+                let mut temp_reg_a = *reg_b * 2_i64.pow(combo as u32) + i;
                 let new_instr_pointer = if instr_pointer > 1 {
                     instr_pointer - 2
                 } else {
@@ -238,7 +236,7 @@ pub fn instruction_reverse(
                 if instruction_reverse(
                     new_instr_pointer,
                     &mut temp_reg_a,
-                    &mut temp_reg_b,
+                    &mut reg_b.clone(),
                     &mut reg_c.clone(),
                     program,
                     output_index,
@@ -263,8 +261,7 @@ pub fn instruction_reverse(
                 _ => unreachable!(),
             };
             for i in 0..2_i64.pow(combo as u32) {
-                let mut temp_reg_c = *reg_a * 2_i64.pow(combo as u32) + i;
-                let mut temp_reg_a = *reg_a;
+                let mut temp_reg_a = *reg_c * 2_i64.pow(combo as u32) + i;
                 let new_instr_pointer = if instr_pointer > 1 {
                     instr_pointer - 2
                 } else {
@@ -274,7 +271,7 @@ pub fn instruction_reverse(
                     new_instr_pointer,
                     &mut temp_reg_a,
                     &mut reg_b.clone(),
-                    &mut temp_reg_c,
+                    &mut reg_c.clone(),
                     program,
                     output_index,
                     output,
