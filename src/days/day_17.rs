@@ -108,6 +108,12 @@ pub fn instruction_reverse(
     let op_code = program[instr_pointer];
     let literal_operand = program[instr_pointer + 1];
 
+    if instr_pointer > 1 {
+        instr_pointer -= 2;
+    } else {
+        instr_pointer = program.len() - 2;
+    }
+
     match op_code {
         0 => {
             // adv
@@ -119,13 +125,8 @@ pub fn instruction_reverse(
             };
             for i in 0..2_i64.pow(combo as u32) {
                 let mut temp_reg_a = *reg_a * 2_i64.pow(combo as u32) + i;
-                let new_instr_pointer = if instr_pointer > 1 {
-                    instr_pointer - 2
-                } else {
-                    program.len() - 2
-                };
                 if instruction_reverse(
-                    new_instr_pointer,
+                    instr_pointer,
                     &mut temp_reg_a,
                     &mut reg_b.clone(),
                     &mut reg_c.clone(),
@@ -137,20 +138,10 @@ pub fn instruction_reverse(
                     return true;
                 }
             }
-            if instr_pointer > 1 {
-                instr_pointer -= 2;
-            } else {
-                instr_pointer = program.len() - 2;
-            }
         }
         1 => {
             // bxl
             *reg_b ^= literal_operand;
-            if instr_pointer > 1 {
-                instr_pointer -= 2;
-            } else {
-                instr_pointer = program.len() - 2;
-            }
         }
         2 => {
             // bst
@@ -171,29 +162,26 @@ pub fn instruction_reverse(
                 6 => *reg_c = *reg_b,
                 _ => unreachable!(),
             }
-            if instr_pointer > 1 {
-                instr_pointer -= 2;
-            } else {
-                instr_pointer = program.len() - 2;
-            }
+            // let combo = match literal_operand {
+            //     0_i64..=3_i64 => literal_operand,
+            //     4 => *reg_a,
+            //     5 => *reg_b,
+            //     6 => *reg_c,
+            //     _ => unreachable!(),
+            // };
+            // if combo != *reg_b % 8 {
+            //     println!("BST: combo does not match up");
+            //     dbg!(&combo, &literal_operand, &reg_b);
+            //     return false;
+            // }
         }
         3 => {
             // jnz
             // noop
-            if instr_pointer > 1 {
-                instr_pointer -= 2;
-            } else {
-                instr_pointer = program.len() - 2;
-            }
         }
         4 => {
             // bxc
             *reg_b ^= *reg_c;
-            if instr_pointer > 1 {
-                instr_pointer -= 2;
-            } else {
-                instr_pointer = program.len() - 2;
-            }
         }
         5 => {
             // out
@@ -212,29 +200,19 @@ pub fn instruction_reverse(
             dbg!(combo);
             dbg!(output[output_index as usize]);
             output_index -= 1;
-            if instr_pointer > 1 {
-                instr_pointer -= 2;
-            } else {
-                instr_pointer = program.len() - 2;
-            }
         }
         6 => {
             // bdv
             let combo = match literal_operand {
                 0_i64..=3_i64 => literal_operand,
-                5 => *reg_b,
+                //5 => *reg_b,
                 6 => *reg_c,
                 _ => unreachable!(),
             };
             for i in 0..2_i64.pow(combo as u32) {
                 let mut temp_reg_a = *reg_b * 2_i64.pow(combo as u32) + i;
-                let new_instr_pointer = if instr_pointer > 1 {
-                    instr_pointer - 2
-                } else {
-                    program.len() - 2
-                };
                 if instruction_reverse(
-                    new_instr_pointer,
+                    instr_pointer,
                     &mut temp_reg_a,
                     &mut reg_b.clone(),
                     &mut reg_c.clone(),
@@ -245,11 +223,6 @@ pub fn instruction_reverse(
                     *reg_a = temp_reg_a;
                     return true;
                 }
-            }
-            if instr_pointer > 1 {
-                instr_pointer -= 2;
-            } else {
-                instr_pointer = program.len() - 2;
             }
         }
         7 => {
@@ -257,18 +230,13 @@ pub fn instruction_reverse(
             let combo = match literal_operand {
                 0_i64..=3_i64 => literal_operand,
                 5 => *reg_b,
-                6 => *reg_c,
+                // 6 => *reg_c,
                 _ => unreachable!(),
             };
             for i in 0..2_i64.pow(combo as u32) {
                 let mut temp_reg_a = *reg_c * 2_i64.pow(combo as u32) + i;
-                let new_instr_pointer = if instr_pointer > 1 {
-                    instr_pointer - 2
-                } else {
-                    program.len() - 2
-                };
                 if instruction_reverse(
-                    new_instr_pointer,
+                    instr_pointer,
                     &mut temp_reg_a,
                     &mut reg_b.clone(),
                     &mut reg_c.clone(),
@@ -279,11 +247,6 @@ pub fn instruction_reverse(
                     *reg_a = temp_reg_a;
                     return true;
                 }
-            }
-            if instr_pointer > 1 {
-                instr_pointer -= 2;
-            } else {
-                instr_pointer = program.len() - 2;
             }
         }
         _ => unreachable!(),
