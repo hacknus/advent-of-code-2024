@@ -8,8 +8,8 @@ pub struct DayTwentyFive {}
 impl Problem for DayTwentyFive {
     fn part_one(&self, input: &Path) -> String {
         let content = fs::read_to_string(input).unwrap();
-        let mut keys = HashSet::new();
-        let mut locks = HashSet::new();
+        let mut keys = vec![];
+        let mut locks = vec![];
         for entry in content.split("\n\n") {
             let mut arr = [0; 5];
             for line in entry.split("\n").skip(1).take(5) {
@@ -20,9 +20,9 @@ impl Problem for DayTwentyFive {
                 }
             }
             if entry.starts_with("#####") {
-                locks.insert(arr);
+                locks.push(arr);
             } else if entry.starts_with(".....") {
-                keys.insert(arr);
+                keys.push(arr);
             } else {
                 unreachable!()
             }
